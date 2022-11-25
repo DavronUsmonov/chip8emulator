@@ -8,15 +8,6 @@ const unsigned int FONTSET_SIZE = 80;
 const unsigned int FONTSET_START_ADDRESS = 0x50;
 const unsigned int START_ADDRESS = 0x200;
 
-/*
-00100000
-01100000
-00100000
-00100000
-01110000
-*/
-
-
 uint8_t fontset[FONTSET_SIZE] = {
     0xF0, 0x90, 0x90, 0x90, 0xF0, //0
     0x20, 0x60, 0x20, 0x20, 0x70, //1
@@ -36,11 +27,15 @@ uint8_t fontset[FONTSET_SIZE] = {
 	0xF0, 0x80, 0xF0, 0x80, 0x80  // F
 };
 
-Chip::Chip8() {
+Chip::Chip8() : randGen(std::chrono::system.clock()::now().time_since_epoch().count()) {
+    //Load fonts
     for(unsigned int i = 0; i < FONTSET_SIZE; i++) {
         memory[FONTSET_START_ADDRESS + i] = fontset[i];
     }
+    //Set program counter to 0x200
     pc = START_ADDRESS; 
+
+    randByte = std::uniform_int_distribution<uint8_t>(0, 255U);
 }
 
 void Chip8::LoadRom(const char* filename) {
