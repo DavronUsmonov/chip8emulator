@@ -38,6 +38,11 @@ Chip::Chip8() : randGen(std::chrono::system.clock()::now().time_since_epoch().co
     randByte = std::uniform_int_distribution<uint8_t>(0, 255U);
 }
 
+void Chip8::Cycle() {
+    opcode = (memory[pc] << 8u) | memory[pc+1];
+    pc += 2;
+}
+
 void Chip8::LoadRom(const char* filename) {
     std::ifstream file(filename, std::ios::binary | std::ios::ate);
 
@@ -54,6 +59,31 @@ void Chip8::LoadRom(const char* filename) {
         }
         delete[] buffer;
     }
+}
+
+void Chip8::OP_NULL() {
+
+}
+
+void Chip8::OP_00E0() {
+    memset(video, 0, sizeof(video));
+}
+
+void Chip8::OP_00EE() {
+    pc = stack[sp];
+    sp--;
+}
+
+void Chip8::OP_1nnn() {
+    uint16_t newAddress = opcode & 0x0FFFu;
+    pc = newAddress;
+}
+
+void Chip8::OP_2nnn() { 
+    sp++;
+    stack[sp] = pc;
+    uint16_t newAddress = opcode & 0x0FFFu;
+    pc = newAddress;
 }
 
 
