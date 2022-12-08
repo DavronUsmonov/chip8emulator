@@ -29,6 +29,10 @@ class Chip8 {
         void LoadRom(const char* filename);
         void Cycle();
     private:
+        void Table0();
+        void Table8();
+        void TableE();
+        void TableF();  
         void OP_NULL();
         void OP_00E0();
         void OP_00EE();
@@ -64,4 +68,12 @@ class Chip8 {
         void OP_Fx33();
         void OP_Fx55();
         void OP_Fx65();
+
+        typedef void(Chip8::*Chip8Func);
+        Chip8Func table[0xF + 1];
+        Chip8Func table0[0xE + 1];
+        Chip8Func table8[0xE + 1];
+        Chip8Func tableE[0xE + 1];
+        Chip8Func tableF[0x65 + 1];
+
 }
