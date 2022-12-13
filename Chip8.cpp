@@ -1,4 +1,4 @@
-#include "Chip8.hpp"
+#include "./Chip8.hpp"
 #include <cstdint>
 #include <fstream>
 #include <chrono>
@@ -27,7 +27,7 @@ uint8_t fontset[FONTSET_SIZE] = {
 	0xF0, 0x80, 0xF0, 0x80, 0x80  // F
 };
 
-Chip::Chip8() : randGen(std::chrono::system.clock()::now().time_since_epoch().count()) {
+Chip8::Chip8() : randGen(std::chrono::system_clock::now().time_since_epoch().count()) {
     //Load fonts
     for(unsigned int i = 0; i < FONTSET_SIZE; i++) {
         memory[FONTSET_START_ADDRESS + i] = fontset[i];
@@ -276,7 +276,7 @@ void Chip8::OP_Dxyn() {
     uint8_t reg2 = (opcode & 0x00F0u) >> 4u;
     uint8_t height = opcode & 0x000Fu;
     uint8_t xPos = registers[reg1] % VIDEO_WIDTH;
-    uint8_t yPos = registers[reg2] % VIDE0_HEIGHT;
+    uint8_t yPos = registers[reg2] % VIDEO_HEIGHT;
     registers[0xF] = 0;
     for(unsigned int row = 0; row < height; row++) {
         uint8_t spriteByte = memory[index+row];
