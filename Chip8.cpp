@@ -3,6 +3,7 @@
 #include <fstream>
 #include <chrono>
 #include <random>
+#include <cstring>
 
 const unsigned int FONTSET_SIZE = 80;
 const unsigned int FONTSET_START_ADDRESS = 0x50;
@@ -278,28 +279,28 @@ void Chip8::OP_Dxyn() {
     uint8_t xPos = registers[reg1] % VIDEO_WIDTH;
     uint8_t yPos = registers[reg2] % VIDEO_HEIGHT;
     registers[0xF] = 0;
-    for(unsigned int row = 0; row < height; row++) {
+    for(unsigned int row = 0; row < height; ++row) {
         uint8_t spriteByte = memory[index+row];
-        for(unsigned int col = 0; col < 8; col++) {
+        for(unsigned int col = 0; col < 8; ++col) {
             uint8_t currSpritePixel = spriteByte & (0x80u >> col);
             uint32_t* videoPixel = &video[(yPos + row) * VIDEO_WIDTH + (xPos + col)];
             if(currSpritePixel) {
-                registers[0xF] = (*videoPixel == 0xFFFFFFFFu) ? 1 : 0;
+                if(*videoPixel == 0xFFFFFFFF) registers[0xF] = 1;
+                *videoPixel ^= 0xFFFFFFFF;
             }
-            *videoPixel ^= 0xFFFFFFFFu;
         }
     }
 }
 
 void Chip8::OP_Ex9E() {
     uint8_t reg = (opcode & 0x0F00u) >> 8u;
-    uint16_t key = registers[reg];
+    uint8_t key = registers[reg];
     if(keypad[key]) pc += 2;
 }
 
 void Chip8::OP_ExA1() {
     uint8_t reg = (opcode & 0x0F00u) >> 8u;
-    uint16_t key = registers[reg];
+    uint8_t key = registers[reg];
     if(!keypad[key]) pc += 2;
 }
 
@@ -334,7 +335,7 @@ void Chip8::OP_Fx15() {
     delayTimer = registers[reg];
 }
 
-void Chip8::OP_Fx15() {
+void Chip8::OP_Fx18() {
     uint8_t reg = (opcode & 0x0F00u) >> 8u;
     soundTimer = registers[reg];
 }
@@ -367,6 +368,6 @@ void Chip8::OP_Fx55() {
 void Chip8::OP_Fx65() {
     uint8_t reg = (opcode & 0x0F00u) >> 8u;
     for(uint8_t i = 0; i <= reg; i++) {
-        registers[i] = registers[index + i];
+        registers[i] = memory[index + i];
     }
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <random>
 
 const unsigned int KEY_COUNT = 16;
 const unsigned int MEMORY_SIZE = 4096;
@@ -23,7 +24,7 @@ class Chip8 {
         std::default_random_engine randGen;
         std::uniform_int_distribution<uint8_t> randByte;
     public:
-        uint16_t keypad[KEY_COUNT]{};
+        uint8_t keypad[KEY_COUNT]{};
         uint32_t video[VIDEO_WIDTH * VIDEO_HEIGHT]{};
         Chip8();
         void LoadRom(const char* filename);
